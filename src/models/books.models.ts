@@ -1,7 +1,7 @@
-import { model, Schema } from "mongoose";
-import { IBook } from "../interfaces/book.interface";
+import { Model, model, Schema } from "mongoose";
+import { BookInstanceMethod, IBook } from "../interfaces/book.interface";
 
-const booksSchema = new Schema<IBook>({
+const booksSchema = new Schema<IBook, Model<IBook>, BookInstanceMethod>({
     title: {
         type: String,
         required: [true, 'title must be required'],
@@ -53,4 +53,22 @@ const booksSchema = new Schema<IBook>({
     }
 );
 
-export const Book = model<IBook>('Book', booksSchema);
+
+booksSchema.static('unavailableIfEmpty', async function main(id: string) {
+
+    const data = await Book.findById(id);
+
+    if (data?.copies === 0) {
+        await Book.findByIdAndUpdate(id, {
+            $set: {
+                available: false
+            }
+        },
+            {
+                runValidators: true
+            });
+    }
+}
+);
+
+export const Book = model<IBook, BookInstanceMethod>('Book', booksSchema);

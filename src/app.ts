@@ -4,7 +4,9 @@ import { borrowRoutes } from './controller/borrow.controller';
 
 const app: Application = express();
 
-app.use(express.json())
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use('/api/books', booksRoutes);
 app.use('/api/borrow', borrowRoutes);
 

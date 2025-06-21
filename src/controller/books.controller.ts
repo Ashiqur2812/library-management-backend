@@ -4,32 +4,117 @@ import { Book } from '../models/books.models';
 export const booksRoutes = express.Router();
 
 booksRoutes.get('/', async (req: Request, res: Response) => {
-    const books = await Book.find();
-    res.status(200).json({
-        success: true,
-        message: 'Books retrieved successfully',
-        books
-    });
+    try {
+        const { filter, sortBy = 'createdAt', sort = 'desc', limit = 10 } = req.query;
+
+        const query: any = {};
+        if (filter) {
+            query.genre = filter;
+        }
+
+        let queryBuilder = Book.find(query);
+
+        // Sort if needed
+        if (sortBy && sort) {
+            queryBuilder = queryBuilder.sort({ [sortBy as string]: sort === "desc" ? -1 : 1 });
+        }
+
+        // Limit if needed
+        if (limit) {
+            queryBuilder = queryBuilder.limit(parseInt(limit as string));
+        }
+
+        // Finally execute
+        const books = await queryBuilder;
+
+        res.status(200).json({
+            success: true,
+            message: 'Books retrieved successfully',
+            books
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Book retrieved failed",
+            success: false,
+            error,
+        });
+    }
 });
 
 booksRoutes.get('/:bookId', async (req: Request, res: Response) => {
-    const bookId = req.params.bookId;
-    const books = await Book.findById(bookId);
-    res.status(200).json({
-        success: true,
-        message: 'Book retrieved successfully',
-        books
-    });
+    try {
+        const bookId = req.params.bookId;
+        const books = await Book.findById(bookId);
+        res.status(200).json({
+            success: true,
+            message: 'Book retrieved successfully',
+            books
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Book retrieved failed",
+            success: false,
+            error,
+        });
+    }
 });
 
 booksRoutes.post('/', async (req: Request, res: Response) => {
-    const body = req.body;
-    console.log(body);
-    const books = await Book.create(body);
+    try {
+        const body = req.body;
+        console.log(body);
+        const books = await Book.create(body);
 
-    res.status(201).json({
-        success: true,
-        message: 'Books created successfully',
-        books
-    });
+        res.status(201).json({
+            success: true,
+            message: 'Books created successfully',
+            books
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Book created failed",
+            success: false,
+            error,
+        });
+    }
+});
+
+booksRoutes.patch('/:bookId', async (req: Request, res: Response) => {
+    try {
+        const bookId = req.params.bookId;
+        const updatedBody = req.body;
+        const books = await Book.findByIdAndUpdate(bookId, updatedBody, { new: true });
+
+        res.status(201).json({
+            success: true,
+            message: 'Book Updated Successfully',
+            books
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Book Updated failed",
+            success: false,
+            error,
+        });
+    }
+});
+
+booksRoutes.delete('/:bookId', async (req: Request, res: Response) => {
+    try {
+        const bookId = req.params.bookId;
+        const books = await Book.findByIdAndDelete(bookId);
+
+        res.status(200).json({
+            success: true,
+            message: 'Book deleted successfully',
+            books: null
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Book deleted failed",
+            success: false,
+            error,
+        });
+    }
 });
