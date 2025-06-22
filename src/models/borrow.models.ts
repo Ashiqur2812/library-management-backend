@@ -1,5 +1,7 @@
 import { model, Schema } from "mongoose";
 import { IBorrow } from "../interfaces/borrow.interface";
+import { HydratedDocument } from "mongoose";
+import { Book } from "./books.models";
 
 const borrowSchema = new Schema<IBorrow>({
     book: {
@@ -20,6 +22,23 @@ const borrowSchema = new Schema<IBorrow>({
     {
         timestamps: true,
         versionKey: false
+    }
+);
+
+borrowSchema.post(
+    "save",
+    async function (doc: HydratedDocument<IBorrow>, next: () => void) {
+        await Book.findByIdAndUpdate(
+            doc.book,
+            {
+                $inc: {
+                    copies: -doc.quantity,
+                },
+            },
+            { new: true, runValidators: true }
+        );
+        await Book.unavailableIfEmpty(doc.book.toString());
+        next();
     }
 );
 
