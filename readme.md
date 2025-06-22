@@ -1,129 +1,92 @@
-````markdown
-#  Library Management API
-
-### A robust and developer-friendly **Library Management System** built using **Express.js**, **TypeScript**, and **MongoDB** (via **Mongoose**). This API allows users to manage books and borrowing records with proper validation, business logic enforcement, and efficient querying.
+A production-ready RESTful API for managing library resources built with Express.js, TypeScript, and MongoDB. This system provides comprehensive book management capabilities with robust validation, real-time availability tracking, and detailed borrowing records.
 
 ---
 
-##  Tech Stack
+## Technology Stack
 
-- **Backend**: Node.js, Express.js
-- **Language**: TypeScript
-- **Database**: MongoDB (Mongoose ODM)
-- **Tools & Features**:
-  - Schema Validation
-  - Business Logic Enforcement
-  - Mongoose Middleware (pre, post)
-  - Aggregation Pipeline
-  - Filtering & Sorting
-  - Static/Instance Methods
+| Component          | Technology               |
+|--------------------|--------------------------|
+| **Runtime**        | Node.js (v18+)           |
+| **Framework**      | Express.js               |
+| **Language**       | TypeScript               |
+| **Database**       | MongoDB (Mongoose ODM)   |
+| **Validation**     | Mongoose Schema Validation |
+| **Data Processing**| MongoDB Aggregation Pipeline |
 
 ---
 
-##  Features
+## Core Features
 
- Create, Read, Update, Delete (CRUD) operations for books  
- Borrow books with quantity control and due date  
- Smart availability tracking (based on available copies)  
- Aggregated report of borrowed books  
- Genre filtering and dynamic sorting  
- Standardized success and error response formats  
- Fully typed with TypeScript for safety and scalability  
-
----
-
-##  Project Structure
-
-```bash
- library-management-api
- ┣ models         # Mongoose models for Book and Borrow
- ┣ routes         # Express routes for Book and Borrow APIs
- ┣ controllers    # Logic for handling requests
- ┣ middlewares    # Error and validation middleware
- ┣ app.ts         # Main Express app configuration
- ┣ server.ts      # Entry point for server
- ┗ README.md      # Project documentation
-````
+- **Comprehensive Book Management**: Full CRUD operations for library inventory
+- **Intelligent Borrowing System**: 
+  - Real-time quantity validation
+  - Automatic availability status updates
+  - Due date enforcement
+- **Advanced Query Capabilities**:
+  - Genre-based filtering
+  - Multi-field sorting (title, creation date)
+  - Results limitation
+- **Reporting & Analytics**:
+  - Aggregate borrowing statistics
+  - Real-time availability tracking
+- **Type-Safe Architecture**: End-to-end TypeScript implementation
+- **RESTful Design**: Standardized API conventions and response formats
 
 ---
 
-##  API Endpoints & Examples
+## Project Structure
 
-### 1.  Create a Book
-
-```http
-POST /api/books
+```
+library-management-api/
+├── models/          # Database schemas (Book, Borrow)
+├── routes/          # API endpoint definitions
+├── controllers/     # Business logic handlers
+├── middlewares/     # Custom middleware (error, validation)
+├── app.ts           # Express application configuration
+├── server.ts        # Server entry point
+└── README.md        # Project documentation
 ```
 
-**Request Body**:
+---
 
-```json
+## API Documentation
+
+### Book Management
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/books` | POST | Create new book |
+| `/api/books` | GET | Get all books (filter/sort) |
+| `/api/books/:bookId` | GET | Get single book details |
+| `/api/books/:bookId` | PUT | Update book information |
+| `/api/books/:bookId` | DELETE | Remove book from system |
+
+**Create Book Example**
+```http
+POST /api/books
+Content-Type: application/json
+
 {
-  "title": "The Theory of Everything",
+  "title": "A Brief History of Time",
   "author": "Stephen Hawking",
   "genre": "SCIENCE",
   "isbn": "9780553380163",
-  "description": "An overview of cosmology and black holes.",
-  "copies": 5
+  "copies": 7
 }
 ```
 
-**Response**: Book object with timestamps
+### Borrow Operations
 
----
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/borrow` | POST | Borrow book copies |
+| `/api/borrow` | GET | Get borrowing summary |
 
-### 2.  Get All Books (Supports Filtering, Sorting)
-
-```http
-GET /api/books?filter=FANTASY&sortBy=createdAt&sort=desc&limit=5
-```
-
-* **filter**: by genre
-* **sortBy**: any field like `createdAt`, `title`
-* **sort**: `asc` or `desc`
-* **limit**: number of books to return
-
----
-
-### 3.  Get a Book by ID
-
-```http
-GET /api/books/:bookId
-```
-
----
-
-### 4. Update a Book
-
-```http
-PUT /api/books/:bookId
-```
-
-**Request Body**:
-
-```json
-{ "copies": 10 }
-```
-
----
-
-### 5. Delete a Book
-
-```http
-DELETE /api/books/:bookId
-```
-
----
-
-### 6. Borrow a Book
-
+**Borrow Books Example**
 ```http
 POST /api/borrow
-```
+Content-Type: application/json
 
-**Request Body**:
-
-```json
 {
   "book": "64ab3f9e2a4b5c6d7e8f9012",
   "quantity": 2,
@@ -131,41 +94,36 @@ POST /api/borrow
 }
 ```
 
- Checks available copies
- Updates book availability if copies become 0
- Records borrow history with timestamps
+**Borrowing Constraints**
+- Validates available copies
+- Prevents over-borrowing
+- Automatically updates book availability
+- Tracks due dates
 
 ---
 
-### 7. Borrowed Books Summary (Aggregation)
+## Response Formats
 
-```http
-GET /api/borrow
-```
-
-Returns:
-
-* `title`
-* `isbn`
-* `totalQuantity` borrowed
-
----
-
-## Error Response Format (Example)
-
+**Success Response**
 ```json
 {
-  "message": "Validation failed",
+  "success": true,
+  "data": {
+    "title": "Clean Code",
+    "available": true,
+    "copies": 3
+  }
+}
+```
+
+**Error Handling**
+```json
+{
   "success": false,
+  "message": "Insufficient copies available",
   "error": {
-    "name": "ValidationError",
-    "errors": {
-      "copies": {
-        "message": "Copies must be a positive number",
-        "kind": "min",
-        "value": -5
-      }
-    }
+    "availableCopies": 2,
+    "requested": 3
   }
 }
 ```
@@ -174,67 +132,65 @@ Returns:
 
 ## Business Logic Highlights
 
-* Borrow operation enforces:
+1. **Inventory Integrity**
+   - Real-time copy validation
+   - Automatic availability status updates
+   - Prevention of negative inventory
 
-  * Positive copy validation
-  * Availability check
-  * Quantity deduction from original stock
-  * Automatic toggle of `available: false` when stock is 0
-* Book updates only allow meaningful changes
-* Borrow summaries use MongoDB aggregation for performance
+2. **Borrowing System**
+   - Quantity-based borrowing limits
+   - Due date enforcement
+   - Atomic inventory updates
+
+3. **Reporting**
+   - Aggregate borrowing statistics
+   - Title-based quantity reporting
+   - Real-time availability status
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
-
-* Node.js (v18+)
-* MongoDB local or Atlas cluster
+- Node.js v18+
+- MongoDB instance (local or cloud)
 
 ### Installation
-
 ```bash
 git clone https://github.com/Ashiqur2812/library_management
 cd library-management
 npm install
 ```
 
-###  Setup
-
+### Configuration
 Create `.env` file:
-
 ```env
 PORT=4000
 DATABASE_URL=mongodb://localhost:27017/library
 ```
 
----
-
-###  Run the App
-
+### Execution
 ```bash
 npm run dev
 ```
-
-App runs at: `http://localhost:4000`
+Server starts at: `http://localhost:4000`
 
 ---
 
-##  Future Improvements (Optional Ideas)
+## Roadmap & Future Enhancements
 
-* JWT-based Authentication
-* Role-based access (admin, librarian, member)
-* Return & fine tracking system
-* Pagination for large data
-* Swagger API documentation
+- **User Authentication**: JWT-based access control
+- **Role Management**: Admin/Librarian/Patron roles
+- **Fine Calculation System**: Late return penalties
+- **Pagination**: Large dataset handling
+- **API Documentation**: Swagger/OpenAPI implementation
+- **Reservation System**: Hold requests for unavailable items
 
 ---
 
 ## Author
-
-**MD Ashiqur Rahman**
-Sociology Master's Student | Junior Web Developer
-
----
-
+**MD Ashiqur Rahman**  
+Backend Developer  
+[GitHub Profile](https://github.com/Ashiqur2812)
+```
+This README provides a clear, structured overview of your Library Management System API, highlighting its features, structure, and usage. It maintains a professional tone while ensuring that all necessary information is easily accessible to developers and users alike. Feel free to adjust any sections as needed!
