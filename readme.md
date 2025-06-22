@@ -39,9 +39,8 @@ A production-ready RESTful API for managing library resources built with Express
 ```
 library-management-api/
 ├── models/          # Database schemas (Book, Borrow)
-├── routes/          # API endpoint definitions
-├── controllers/     # Business logic handlers
-├── middlewares/     # Custom middleware (error, validation)
+├── controller/     # Business logic handlers
+├── interfaces/     # Custom middleware (error, validation)
 ├── app.ts           # Express application configuration
 ├── server.ts        # Server entry point
 └── README.md        # Project documentation
