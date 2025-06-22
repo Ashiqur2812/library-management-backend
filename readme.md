@@ -1,7 +1,7 @@
 ````markdown
 #  Library Management API
 
-A robust and developer-friendly **Library Management System** built using **Express.js**, **TypeScript**, and **MongoDB** (via **Mongoose**). This API allows users to manage books and borrowing records with proper validation, business logic enforcement, and efficient querying.
+### A robust and developer-friendly **Library Management System** built using **Express.js**, **TypeScript**, and **MongoDB** (via **Mongoose**). This API allows users to manage books and borrowing records with proper validation, business logic enforcement, and efficient querying.
 
 ---
 
