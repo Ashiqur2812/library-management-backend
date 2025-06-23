@@ -191,5 +191,3 @@ Server starts at: `http://localhost:4000`
 **MD Ashiqur Rahman**  
 Backend Developer  
 [GitHub Profile](https://github.com/Ashiqur2812)
-```
-This README provides a clear, structured overview of your Library Management System API, highlighting its features, structure, and usage. It maintains a professional tone while ensuring that all necessary information is easily accessible to developers and users alike. Feel free to adjust any sections as needed!
