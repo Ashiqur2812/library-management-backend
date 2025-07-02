@@ -11,7 +11,7 @@ app.use('/api/books', booksRoutes);
 app.use('/api/borrow', borrowRoutes);
 
 app.get('/', (req: Request, res: Response) => {
-    res.send('Welcome to Library Management App');
+    res.send('Welcome to Library Management Backend Server');
 });
 
 export default app;

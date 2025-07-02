@@ -7,7 +7,7 @@ let server: Server;
 
 async function main() {
     try {
-        const password = await mongoose.connect(process.env.DATABASE_URL!);
+        await mongoose.connect(process.env.DATABASE_URL!);
         console.log('Connected to mongoDB using mongoose');
 
         server = app.listen(process.env.PORT, () => {
