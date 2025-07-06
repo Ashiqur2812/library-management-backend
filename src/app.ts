@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
     origin:
-        ['http://localhost:5173', 'https://library-management-frontend-8cwwg7x6u.vercel.app'],
+        ['http://localhost:5173', 'https://library-management-frontend-theta.vercel.app'],
     credentials: true
 }));
 
