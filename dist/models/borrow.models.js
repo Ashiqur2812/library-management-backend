@@ -31,13 +31,13 @@ const borrowSchema = new mongoose_1.Schema({
     timestamps: true,
     versionKey: false
 });
-borrowSchema.post("save", function (doc, next) {
+borrowSchema.post('save', function (doc, next) {
     return __awaiter(this, void 0, void 0, function* () {
         yield books_models_1.Book.findByIdAndUpdate(doc.book, {
-            $inc: {
-                copies: -doc.quantity,
-            },
-        }, { new: true, runValidators: true });
+            $inc: { copies: -doc.quantity }
+        }, {
+            new: true, runValidators: true
+        });
         yield books_models_1.Book.unavailableIfEmpty(doc.book.toString());
         next();
     });

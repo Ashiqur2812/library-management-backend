@@ -19,7 +19,7 @@ let server;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const password = yield mongoose_1.default.connect(process.env.DATABASE_URL);
+            yield mongoose_1.default.connect(process.env.DATABASE_URL);
             console.log('Connected to mongoDB using mongoose');
             server = app_1.default.listen(process.env.PORT, () => {
                 console.log(`App is listening on port ${process.env.PORT}`);

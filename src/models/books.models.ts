@@ -42,6 +42,10 @@ const booksSchema = new Schema<IBook, Model<IBook>, BookInstanceMethod>({
         required: [true, 'copies must be required'],
         min: [0, 'copies must be positive number']
     },
+    image: {
+        type: String,
+        required: [true, 'image must be required']
+    },
     available: {
         type: Boolean,
         default: true
