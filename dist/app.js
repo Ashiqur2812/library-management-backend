@@ -13,7 +13,7 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cors_1.default)({
-    origin: ['http://localhost:5173', 'https://library-management-frontend-theta.vercel.app'],
+    origin: ['http://localhost:5173', 'https://library-management-frontend-theta.vercel.app', 'https://library-management-frontend-5m0p58dz5.vercel.app'],
     credentials: true
 }));
 app.use('/api/books', books_controller_1.booksRoutes);
